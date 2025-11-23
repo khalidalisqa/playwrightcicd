@@ -8,9 +8,6 @@ jobs:
   playwright:
     name: 'Playwright Tests'
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.56.1-noble
-      options: --user 1001
 
     steps:
       - uses: actions/checkout@v5
@@ -22,7 +19,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # ✅ Add LambdaTest environment variables
+      - name: Install Playwright Browsers
+        run: npx playwright install
+
+      # LambdaTest credentials
       - name: Run your tests on LambdaTest
         run: npx playwright test
         env:
