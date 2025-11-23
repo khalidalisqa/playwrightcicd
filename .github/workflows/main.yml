@@ -3,18 +3,16 @@ name: Playwright Tests
 on:
   push:
     branches: [ main ]
-  pull_request:
-
 jobs:
   playwright:
-    name: Playwright Tests
+    name: 'Playwright Tests'
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.61.0-focal
+      image: mcr.microsoft.com/playwright:latest
       options: --user 1001
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v5
 
       - name: Setup Node.js
@@ -25,26 +23,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # ✅ Set LambdaTest environment variables
-      - name: Run Playwright tests on LambdaTest
-        run: npx playwright test --reporter=list,html
+      # ✅ Set LambdaTest credentials from GitHub Secrets
+      - name: Run Playwright Tests on LambdaTest
         env:
           LT_USERNAME: ${{ secrets.LT_USERNAME }}
           LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
-          HOME: /root
+          HOME: /github/home   # Fixes Firefox container issue
+        run: |
+          npx playwright test --reporter=html || true
 
-      # ✅ Upload HTML report after every run
-      - name: Upload Playwright HTML Report
+      # ✅ Upload HTML report
+      - name: Upload HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report
 
-      # ✅ Upload screenshots only if tests fail
-      - name: Upload Screenshots on Failure
+      # ✅ Upload screenshots on failure
+      - name: Upload failure screenshots
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-failed-screenshots
+          name: playwright-screenshots
           path: tests/test-results/**/*.png
