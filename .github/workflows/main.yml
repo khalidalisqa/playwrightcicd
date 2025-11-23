@@ -19,7 +19,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # ✅ Run Playwright tests with LambdaTest credentials
       - name: Run Playwright tests
         run: npx playwright test --reporter=html
         env:
@@ -27,7 +26,6 @@ jobs:
           LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
         continue-on-error: true  # Continue to collect artifacts even if tests fail
 
-      # ✅ Upload HTML report
       - name: Upload Playwright HTML report
         uses: actions/upload-artifact@v4
         with:
