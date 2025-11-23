@@ -32,7 +32,6 @@ jobs:
           name: playwright-report
           path: playwright-report
 
-      # ✅ Upload screenshots from failed tests
       - name: Upload failed test screenshots
         uses: actions/upload-artifact@v4
         if: always()
